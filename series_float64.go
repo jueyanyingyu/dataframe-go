@@ -560,14 +560,16 @@ func (s *SeriesFloat64) Copy(r ...Range) Series {
 		r = append(r, Range{})
 	}
 
-	start, end, err := r[0].Limits(len(s.Values))
-	if err != nil {
-		panic(err)
+	var newSlice []float64
+	for i := range r {
+		start, end, err := r[i].Limits(len(s.Values))
+		if err != nil {
+			panic(err)
+		}
+		// Copy slice
+		x := s.Values[start : end+1]
+		newSlice = append(newSlice, x...)
 	}
-
-	// Copy slice
-	x := s.Values[start : end+1]
-	newSlice := append(x[:0:0], x...)
 
 	return &SeriesFloat64{
 		valFormatter: s.valFormatter,

@@ -524,14 +524,16 @@ func (s *SeriesString) Copy(r ...Range) Series {
 		r = append(r, Range{})
 	}
 
-	start, end, err := r[0].Limits(len(s.values))
-	if err != nil {
-		panic(err)
+	var newSlice []*string
+	for i := range r {
+		start, end, err := r[i].Limits(len(s.values))
+		if err != nil {
+			panic(err)
+		}
+		// Copy slice
+		x := s.values[start : end+1]
+		newSlice = append(newSlice, x...)
 	}
-
-	// Copy slice
-	x := s.values[start : end+1]
-	newSlice := append(x[:0:0], x...)
 
 	return &SeriesString{
 		valFormatter: s.valFormatter,

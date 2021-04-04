@@ -556,14 +556,16 @@ func (s *SeriesTime) Copy(r ...Range) Series {
 		r = append(r, Range{})
 	}
 
-	start, end, err := r[0].Limits(len(s.Values))
-	if err != nil {
-		panic(err)
+	var newSlice []*time.Time
+	for i := range r {
+		start, end, err := r[i].Limits(len(s.Values))
+		if err != nil {
+			panic(err)
+		}
+		// Copy slice
+		x := s.Values[start : end+1]
+		newSlice = append(newSlice, x...)
 	}
-
-	// Copy slice
-	x := s.Values[start : end+1]
-	newSlice := append(x[:0:0], x...)
 
 	return &SeriesTime{
 		valFormatter: s.valFormatter,
